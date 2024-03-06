@@ -1,0 +1,42 @@
+--- ../dotfiles/dev/dwm/dwm.c	2021-09-29 22:36:40.248809510 +0200
++++ dwm.c	2021-10-01 20:57:37.430561536 +0200
+@@ -1599,6 +1599,9 @@
+ setfullscreen(Client *c, int fullscreen)
+ {
+ 	if (fullscreen && !c->isfullscreen) {
++		// Hide bar when fullscreen
++		togglebar(0);
++
+ 		XChangeProperty(dpy, c->win, netatom[NetWMState], XA_ATOM, 32,
+ 			PropModeReplace, (unsigned char*)&netatom[NetWMFullscreen], 1);
+ 		c->isfullscreen = 1;
+@@ -1609,6 +1612,9 @@
+ 		resizeclient(c, c->mon->mx, c->mon->my, c->mon->mw, c->mon->mh);
+ 		XRaiseWindow(dpy, c->win);
+ 	} else if (!fullscreen && c->isfullscreen){
++		// Hide bar when fullscreen
++		togglebar(0);
++
+ 		XChangeProperty(dpy, c->win, netatom[NetWMState], XA_ATOM, 32,
+ 			PropModeReplace, (unsigned char*)0, 0);
+ 		c->isfullscreen = 0;
+@@ -1825,7 +1831,7 @@
+ togglefullscr(const Arg *arg)
+ {
+   if(selmon->sel)
+-    setfullscreen(selmon->sel, !selmon->sel->isfullscreen);
++  	setfullscreen(selmon->sel, !selmon->sel->isfullscreen);
+ }
+ 
+ void
+@@ -1886,6 +1892,10 @@
+ 		XSync(dpy, False);
+ 		XSetErrorHandler(xerror);
+ 		XUngrabServer(dpy);
++
++		// Restore bar when exiting fullscreen
++		if (c->isfullscreen)
++			togglebar(0);
+ 	}
+ 	free(c);
+ 	focus(NULL);
