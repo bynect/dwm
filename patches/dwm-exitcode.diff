@@ -1,0 +1,41 @@
+diff --git a/config.def.h b/config.def.h
+index 1c0b587..14c82c7 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -93,7 +93,8 @@ static Key keys[] = {
+ 	TAGKEYS(                        XK_7,                      6)
+ 	TAGKEYS(                        XK_8,                      7)
+ 	TAGKEYS(                        XK_9,                      8)
+-	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
++	{ MODKEY|ShiftMask,             XK_r,      quit, /*soft*/  {0} },
++	{ MODKEY|ShiftMask,             XK_q,      quit, /*hard*/  {1} },
+ };
+
+ /* button definitions */
+diff --git a/dwm.c b/dwm.c
+index b0b3466..2fa8914 100644
+--- a/dwm.c
++++ b/dwm.c
+@@ -262,6 +262,7 @@ static void (*handler[LASTEvent]) (XEvent *) = {
+ };
+ static Atom wmatom[WMLast], netatom[NetLast];
+ static int running = 1;
++static int exitcode = EXIT_SUCCESS;
+ static Cur *cursor[CurLast];
+ static Clr **scheme;
+ static Display *dpy;
+@@ -1250,6 +1251,7 @@ void
+ quit(const Arg *arg)
+ {
+ 	running = 0;
++	exitcode = arg->i;
+ }
+
+ Monitor *
+@@ -2148,5 +2150,5 @@ main(int argc, char *argv[])
+ 	run();
+ 	cleanup();
+ 	XCloseDisplay(dpy);
+-	return EXIT_SUCCESS;
++	return exitcode;
+ }
